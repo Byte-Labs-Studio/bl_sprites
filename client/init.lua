@@ -2,11 +2,12 @@ local sprites = require "client.modules.sprites"
 local config = require "client.modules.config"
 local spriteClass = require "client.modules.sprite"
 
+
+local keySpriteScaleModifier, txtDict in config
 local GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords = GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords
 local table_unpack = table.unpack
 
 local function drawSprite(sprite, scaleModifier)
-    local txtDict = config.txtDict
     local ratio = GetAspectRatio(true)
 
     local scale = scaleModifier and sprite.scale * scaleModifier or sprite.scale
@@ -16,6 +17,7 @@ local function drawSprite(sprite, scaleModifier)
     SetDrawOrigin(coords.x, coords.y, coords.z)
 
     if sprite.sprite then
+        scale = scale * math.exp(-0.15 * sprite.currentDistance)
         local r, g, b, a = table_unpack(sprite.colour)
         DrawSprite(txtDict, sprite.sprite, 0, 0, scale, scale * ratio, 0.0, r, g, b, a or 255)
     end
@@ -23,7 +25,7 @@ local function drawSprite(sprite, scaleModifier)
     if sprite.key then
         if sprite.keySprite then
             local r, g, b, a = table_unpack(sprite.keyColour)
-            scale = scale * config.keySpriteScaleModifier
+            scale = scale * keySpriteScaleModifier
             DrawSprite(txtDict, 'white_' .. sprite.key, 0, 0, scale, scale * ratio, 0.0, r, g, b, a or 255)
         else
             BeginTextCommandDisplayText('STRING')
@@ -42,8 +44,6 @@ local function drawSprite(sprite, scaleModifier)
 end
 
 CreateThread(function()
-    local txtDict = config.txtDict
-
     local deep_clone = lib.table.deepclone
 
     local activeSprites = sprites.active
@@ -97,12 +97,11 @@ CreateThread(function()
                 if removeSprites[k] <= 0.0 then
                     removeSprites[k] = nil
                     removeActiveSprites[k] = nil
-                else 
+                else
                     drawSprite(v, removeSprites[k] or 0)
                 end
             end
         end
-
 
         oldSprites = deep_clone(activeSprites)
     end
@@ -117,10 +116,11 @@ RegisterCommand('create', function(source, args)
     sprite = spriteClass:defineSprite({
         coords = vec3(coords.x, coords.y, coords.z),
         key = args[1],
+        scale = 0.1,
         -- colour = { 255, 0, 255 },
         -- keyColour = { 0, 255, 255 },
-        -- shape = "hex",
-        distance = 5.0,
+        shape = "hex",
+        distance = 10.0,
         onEnter = function(self)
             print("onEnter")
         end,

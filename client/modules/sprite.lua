@@ -24,18 +24,10 @@ function Sprite:baseConstructor(data)
     local shape = contains(shapes, data.shape) and data.shape or default.shape
     local scale = data.scale or default.scale
     local distance = data.distance or default.distance
-    local coords = data.coords
-    local entity = data.entity
-    local boneId = data.boneId
-    local onEnter = data.onEnter
-    local onExit = data.onExit
-    local nearby = data.nearby
 
-    if type == 'entity' then
-        coords = GetEntityCoords(entity)
-    elseif type == 'bone' then
-        coords = GetWorldPositionOfEntityBone(entity, boneId)
-    end
+    local coords, entity, boneId, onEnter, onExit, nearby in data
+
+    coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or vec3(coords.x, coords.y, coords.z)
 
     local sprite = contains(shapes, data.shape)  and 'white_' .. shape or false
 
@@ -76,18 +68,10 @@ function Sprite:baseConstructor(data)
         end,
 
         nearby = function(self)
+            coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or coords
+            self.coords = coords
 
-            if type == 'entity' then
-                local entity = entity
-                local coords = GetEntityCoords(entity)
-                self.coords = vec3(coords.x, coords.y, coords.z)
-            elseif type == 'bone' then
-                local entity = entity
-                local boneId = boneId
-                local coords = GetWorldPositionOfEntityBone(entity, boneId)
-                self.coords = vec3(coords.x, coords.y, coords.z)
-            end
-
+            self.currentDistance = #(GetEntityCoords(cache.ped) - coords)
             if nearby then
                 nearby(self)
             end
