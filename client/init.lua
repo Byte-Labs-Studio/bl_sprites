@@ -2,7 +2,6 @@ local sprites = require "client.modules.sprites"
 local config = require "client.modules.config"
 local spriteClass = require "client.modules.sprite"
 
-
 local keySpriteScaleModifier, txtDict in config
 local GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords = GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords
 local table_unpack = table.unpack
@@ -107,87 +106,12 @@ CreateThread(function()
     end
 end)
 
-
-local sprite
-
-RegisterCommand('create', function(source, args)
-    local coords = GetEntityCoords(PlayerPedId())
-
-    sprite = spriteClass:defineSprite({
-        coords = vec3(coords.x, coords.y, coords.z),
-        key = args[1],
-        scale = 0.1,
-        -- colour = { 255, 0, 255 },
-        -- keyColour = { 0, 255, 255 },
-        shape = "hex",
-        distance = 10.0,
-        onEnter = function(self)
-            print("onEnter")
-        end,
-        onExit = function(self)
-            print("onExit")
-        end,
-        nearby = function(self)
-            -- print("nearby")
-        end,
-    })
-
-    -- print('creation', json.encode(sprite, {indent = true}))
-end, false)
-
-RegisterCommand('createveh', function()
-    local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
-
-    sprite = spriteClass:defineSpriteOnEntity({
-        -- coords = vec3(coords.x, coords.y, coords.z),
-        entity = vehicle,
-        key = "E",
-        colour = { 255, 0, 255 },
-        keyColour = { 0, 255, 255 },
-        -- shape = "hex",
-        distance = 5.0,
-        onEnter = function(self)
-            print("onEnter")
-        end,
-        onExit = function(self)
-            print("onExit")
-        end,
-        nearby = function(self)
-            -- print("nearby")
-        end,
-    })
-
-    -- print('creation', json.encode(sprite, {indent = true}))
-end, false)
-
-RegisterCommand('createbone', function()
-    local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
-
-    local boneId = GetEntityBoneIndexByName(vehicle, "wheel_lr")
-
-    sprite = spriteClass:defineSpriteOnBone({
-        -- coords = vec3(coords.x, coords.y, coords.z),
-        entity = vehicle,
-        boneId = boneId,
-        key = "E",
-        colour = { 255, 0, 255 },
-        keyColour = { 0, 255, 255 },
-        shape = "hex",
-        distance = 5.0,
-        onEnter = function(self)
-            print("onEnter")
-        end,
-        onExit = function(self)
-            print("onExit")
-        end,
-        nearby = function(self)
-            -- print("nearby")
-        end,
-    })
-
-    -- print('creation', json.encode(sprite, {indent = true}))
-end, false)
-
-RegisterCommand('remove', function()
-    sprite:remove()
-end, false)
+exports('spriteOnEntity', function(data)
+    return spriteClass:defineSpriteOnEntity(data)
+end)
+exports('spriteOnBone', function(data)
+    return spriteClass:defineSpriteOnBone(data)
+end)
+exports('sprite', function(data)
+    return spriteClass:defineSprite(data)
+end)

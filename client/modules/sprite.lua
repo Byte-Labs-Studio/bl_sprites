@@ -5,7 +5,7 @@ local lib_points = lib.points
 local Sprite = {}
 Sprite.__index = Sprite
 
-function Sprite:baseConstructor(data)
+local function baseConstructor(self, data)
     if not data then
         return
     end
@@ -32,8 +32,6 @@ function Sprite:baseConstructor(data)
     local sprite = contains(shapes, data.shape)  and 'white_' .. shape or false
 
     local GetEntityCoords, GetWorldPositionOfEntityBone = GetEntityCoords, GetWorldPositionOfEntityBone
-
-    local self = setmetatable({}, Sprite)
 
     self = lib_points.new({
         type = type,
@@ -78,36 +76,44 @@ function Sprite:baseConstructor(data)
         end,
     })
 
+    function self:removeSprite()
+        local id = self.id
+        if not id then return end
+        self:remove()
+        sprites.active[id] = nil
+    end
+
+    setmetatable(self, Sprite)
     return self
 end
 
 ---@param data DefinedSpriteParam
 function Sprite:defineSprite(data)
     data.type = "default"
-    self:baseConstructor(data)
+    return baseConstructor(self, data)
 end
 
-function Sprite:removeSprite()
-    local id = self.id
+-- function Sprite:removeSprite()
+--     local id = self.id
 
-    if not id then
-        return
-    end
+--     if not id then
+--         return
+--     end
 
-    self:remove()
-    sprites.defined[id] = nil
-end
+--     self:remove()
+--     sprites.active[id] = nil
+-- end
 
 ---@param data EntitySpriteParam
 function Sprite:defineSpriteOnEntity(data)
     data.type = "entity"
-    self:baseConstructor(data)
+    return baseConstructor(self, data)
 end
 
 ---@param data BoneSpriteParam
 function Sprite:defineSpriteOnBone(data)
     data.type = "bone"
-    self:baseConstructor(data)
+    return baseConstructor(self, data)
 end
 
 return Sprite

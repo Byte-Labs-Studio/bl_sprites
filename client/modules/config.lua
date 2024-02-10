@@ -22,7 +22,7 @@ return {
     default = {
         key = '',
         colour = {134, 133, 239, 255},
-        keyColour = {255, 0, 0, 255},
+        keyColour = {255, 255, 255, 255},
         shape = '',
         scale = 0.05,
         distance = 10,
