@@ -1,10 +1,11 @@
 local sprites = require "client.modules.sprites"
 local config = require "client.modules.config"
-local spriteClass = require "client.modules.sprite"
+local CreateSprite = require "client.modules.sprite"
 
 local keySpriteScaleModifier, txtDict in config
 local GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords = GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords
 local table_unpack = table.unpack
+local math_exp = math.exp
 
 local function drawSprite(sprite, scaleModifier)
     local ratio = GetAspectRatio(true)
@@ -16,7 +17,7 @@ local function drawSprite(sprite, scaleModifier)
     SetDrawOrigin(coords.x, coords.y, coords.z)
 
     if sprite.sprite then
-        scale = scale * math.exp(-0.15 * sprite.currentDistance)
+        scale = scale * math_exp(-0.15 * sprite.currentDistance)
         local r, g, b, a = table_unpack(sprite.colour)
         DrawSprite(txtDict, sprite.sprite, 0, 0, scale, scale * ratio, 0.0, r, g, b, a or 255)
     end
@@ -102,16 +103,33 @@ CreateThread(function()
             end
         end
 
+        if next(activeSprites) then
+            sprites.playerCoords = GetEntityCoords(cache.ped)
+        end
+
         oldSprites = deep_clone(activeSprites)
     end
 end)
 
 exports('spriteOnEntity', function(data)
-    return spriteClass:defineSpriteOnEntity(data)
+    return CreateSprite:defineSpriteOnEntity(data)
 end)
+
 exports('spriteOnBone', function(data)
-    return spriteClass:defineSpriteOnBone(data)
+    return CreateSprite:defineSpriteOnBone(data)
 end)
+
 exports('sprite', function(data)
-    return spriteClass:defineSprite(data)
+    return CreateSprite:defineSprite(data)
+end)
+
+exports('updateTargetData', function(id, key, value)
+    if type(id) == 'table' then
+        id = id.id
+    end
+
+    local sprite = sprites.active[id]
+    if not sprite then return end
+
+    sprite:updateTargetData(key, value)
 end)

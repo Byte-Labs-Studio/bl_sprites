@@ -29,7 +29,7 @@ local function baseConstructor(self, data)
 
     coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or vec3(coords.x, coords.y, coords.z)
 
-    local sprite = contains(shapes, data.shape)  and 'white_' .. shape or false
+    local selectedSprite = contains(shapes, data.shape)  and 'white_' .. shape or false
 
     local GetEntityCoords, GetWorldPositionOfEntityBone = GetEntityCoords, GetWorldPositionOfEntityBone
 
@@ -37,7 +37,7 @@ local function baseConstructor(self, data)
         type = type,
         key = key,
         keySprite = keySprite,
-        sprite = sprite,
+        sprite = selectedSprite,
         scale = scale,
         colour = colour,
         keyColour = keyColour,
@@ -66,24 +66,33 @@ local function baseConstructor(self, data)
         end,
 
         nearby = function(self)
-            coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or coords
-            self.coords = coords
 
-            self.currentDistance = #(GetEntityCoords(cache.ped) - coords)
+            if not type == 'default' then
+                coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or coords
+                self.coords = coords 
+            end
+
+            self.currentDistance = #(sprites.playerCoords - coords)
             if nearby then
                 nearby(self)
             end
         end,
+
+        updateTargetData = function(self, key, value)
+            self[key] = value
+        end,
+
+        removeSprite = function(self)
+            local id = self.id
+            if not id then return end
+
+            self:remove()
+            sprites.active[id] = nil
+        end
     })
 
-    function self:removeSprite()
-        local id = self.id
-        if not id then return end
-        self:remove()
-        sprites.active[id] = nil
-    end
+    self = setmetatable(self, Sprite)
 
-    setmetatable(self, Sprite)
     return self
 end
 
@@ -92,17 +101,6 @@ function Sprite:defineSprite(data)
     data.type = "default"
     return baseConstructor(self, data)
 end
-
--- function Sprite:removeSprite()
---     local id = self.id
-
---     if not id then
---         return
---     end
-
---     self:remove()
---     sprites.active[id] = nil
--- end
 
 ---@param data EntitySpriteParam
 function Sprite:defineSpriteOnEntity(data)
