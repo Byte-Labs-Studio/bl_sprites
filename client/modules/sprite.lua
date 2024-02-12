@@ -31,11 +31,14 @@ local function baseConstructor(self, data)
 
     local selectedSprite = contains(shapes, data.shape)  and 'white_' .. shape or false
 
-    local GetEntityCoords, GetWorldPositionOfEntityBone = GetEntityCoords, GetWorldPositionOfEntityBone
+    local GetEntityCoords, GetWorldPositionOfEntityBone, GetScreenCoordFromWorldCoord = GetEntityCoords, GetWorldPositionOfEntityBone, GetScreenCoordFromWorldCoord
 
     self = lib_points.new({
         type = type,
         key = key,
+        canInteract = function()
+            return true
+        end,
         keySprite = keySprite,
         sprite = selectedSprite,
         scale = scale,
@@ -66,10 +69,22 @@ local function baseConstructor(self, data)
         end,
 
         nearby = function(self)
-
             if not type == 'default' then
                 coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or coords
-                self.coords = coords 
+                self.coords = coords
+            end
+
+            local _, x, y = GetScreenCoordFromWorldCoord(coords.x, coords.y, coords.z)
+
+            local inScreen = x > 0.3 and y > 0.25 and x < 0.6 and y < 0.75
+            if inScreen then
+                -- self.key = key
+                -- self.keySprite = keySprite
+                self.scale = scale
+            else
+                -- self.key = 'eye'
+                -- self.keySprite = true
+                self.scale = 0.03
             end
 
             self.currentDistance = #(sprites.playerCoords - coords)

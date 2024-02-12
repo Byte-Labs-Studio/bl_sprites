@@ -8,6 +8,8 @@ local table_unpack = table.unpack
 local math_exp = math.exp
 
 local function drawSprite(sprite, scaleModifier)
+    if sprite.canInteract and not sprite.canInteract() then return end
+
     local ratio = GetAspectRatio(true)
 
     local scale = scaleModifier and sprite.scale * scaleModifier or sprite.scale
@@ -133,3 +135,23 @@ exports('updateTargetData', function(id, key, value)
 
     sprite:updateTargetData(key, value)
 end)
+
+
+local CreateSprite = exports.bl_sprites
+
+local test = CreateSprite:sprite({
+    coords = GetEntityCoords(PlayerPedId()),
+    key = "E",
+    scale = 0.1,
+    -- colour = { 255, 0, 255 },
+    -- keyColour = { 0, 255, 255 },
+    -- shape = "hex",
+    shape = "hex",
+    distance = 10.0,
+    onEnter = function(self)
+        print("onEnter")
+    end,
+    onExit = function(self)
+        print("onExit")
+    end,
+})
