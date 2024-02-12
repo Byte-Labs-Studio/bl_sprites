@@ -18,6 +18,7 @@ return {
         'radial'
     },
 
+
     ---@type SpriteParamBase
     default = {
         key = '',
@@ -26,5 +27,12 @@ return {
         shape = '',
         scale = 0.05,
         distance = 10,
+    },
+
+    spriteIndicatorDefault = true,
+
+    spriteIndicator = {
+        shape = 'circle',
+        scale = 0.02,
     }
 }

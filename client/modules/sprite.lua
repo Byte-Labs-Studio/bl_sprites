@@ -24,6 +24,11 @@ local function baseConstructor(self, data)
     local shape = contains(shapes, data.shape) and data.shape or default.shape
     local scale = data.scale or default.scale
     local distance = data.distance or default.distance
+    local spriteIndicator = config.spriteIndicatorDefault
+
+    if data.spriteIndicator ~= nil then
+        spriteIndicator = data.spriteIndicator
+    end
 
     local coords, entity, boneId, onEnter, onExit, nearby in data
 
@@ -31,7 +36,7 @@ local function baseConstructor(self, data)
 
     local selectedSprite = contains(shapes, data.shape)  and 'white_' .. shape or false
 
-    local GetEntityCoords, GetWorldPositionOfEntityBone, GetScreenCoordFromWorldCoord = GetEntityCoords, GetWorldPositionOfEntityBone, GetScreenCoordFromWorldCoord
+    local GetEntityCoords, GetWorldPositionOfEntityBone = GetEntityCoords, GetWorldPositionOfEntityBone
 
     self = lib_points.new({
         type = type,
@@ -45,6 +50,7 @@ local function baseConstructor(self, data)
         colour = colour,
         keyColour = keyColour,
         distance = distance,
+        spriteIndicator = spriteIndicator,
 
         coords = coords,
         entity = entity,
@@ -72,19 +78,6 @@ local function baseConstructor(self, data)
             if not type == 'default' then
                 coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or coords
                 self.coords = coords
-            end
-
-            local _, x, y = GetScreenCoordFromWorldCoord(coords.x, coords.y, coords.z)
-
-            local inScreen = x > 0.3 and y > 0.25 and x < 0.6 and y < 0.75
-            if inScreen then
-                -- self.key = key
-                -- self.keySprite = keySprite
-                self.scale = scale
-            else
-                -- self.key = 'eye'
-                -- self.keySprite = true
-                self.scale = 0.03
             end
 
             self.currentDistance = #(sprites.playerCoords - coords)

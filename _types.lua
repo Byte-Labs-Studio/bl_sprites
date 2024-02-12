@@ -14,6 +14,7 @@
 ---@field public nearby? function @ The function to call when the player is nearby the sprite
 ---@field public sprite? string @ The sprite name
 ---@field public keySprite? string @ The key sprite name
+---@field public spriteIndicator? boolean @ Whether to display the sprite indicator
 
 ---@class DefinedSpriteParam : SpriteParamBase
 ---@field public coords vector3 @ The coordinates of the sprite
