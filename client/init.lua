@@ -78,14 +78,14 @@ local function drawSprite(sprite, scaleModifier)
         local indicatorScale = indicatorConfig.scale * math_exp(-0.15 * sprite.currentDistance) * indicatorScaleModifier * (scaleModifier or 1.0)
         local r, g, b, a = table_unpack(sprite.colour)
 
-        DrawSprite(txtDict, 'white_'..indicatorConfig.shape, 0, 0, indicatorScale, indicatorScale * ratio, 0.0, r, g, b, a or 255)
+        DrawSprite(txtDict, indicatorConfig.shape, 0, 0, indicatorScale, indicatorScale * ratio, 0.0, r, g, b, a or 255)
     end
 
     if (inViews[id] and sprite.key and not spriteIndicators[id]) or (not sprite.spriteIndicator and sprite.key) then
         if sprite.keySprite then
             local r, g, b, a = table_unpack(sprite.keyColour)
             scale = scale * keySpriteScaleModifier
-            DrawSprite(txtDict, 'white_' .. sprite.key, 0, 0, scale, scale * ratio, 0.0, r, g, b, a or 255)
+            DrawSprite(txtDict, sprite.key, 0, 0, scale, scale * ratio, 0.0, r, g, b, a or 255)
         else
             BeginTextCommandDisplayText('STRING')
             AddTextComponentSubstringPlayerName(sprite.key)
@@ -201,23 +201,3 @@ exports('updateTargetData', function(id, key, value)
 
     sprite:updateTargetData(key, value)
 end)
-
-local CreateSprite = exports.bl_sprites
-
-
-
-RegisterCommand('create', function()
-    local test = CreateSprite:sprite({
-        coords = GetEntityCoords(PlayerPedId()),
-        key = "E",
-        shape = "hex",
-        spriteIndicator = true, 
-        distance = 5.0,
-        onEnter = function(self)
-            print("onEnter")
-        end,
-        onExit = function(self)
-            print("onExit")
-        end,
-    })
-end, false)

@@ -15,7 +15,19 @@ return {
         'eye',
         'lock',
         'unlock',
-        'radial'
+        'radial',
+        'location',
+        'wheel',
+        'trunk',
+        'hood',
+        'person',
+        'basket',
+        'bank',
+        'dollar',
+        'garage',
+        'shirt',
+        'scissors',
+        'dot'
     },
 
 

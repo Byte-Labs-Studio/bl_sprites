@@ -34,7 +34,7 @@ local function baseConstructor(self, data)
 
     coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or vec3(coords.x, coords.y, coords.z)
 
-    local selectedSprite = contains(shapes, data.shape)  and 'white_' .. shape or false
+    local selectedSprite = contains(shapes, data.shape)  and shape or false
 
     local GetEntityCoords, GetWorldPositionOfEntityBone = GetEntityCoords, GetWorldPositionOfEntityBone
 
@@ -75,7 +75,7 @@ local function baseConstructor(self, data)
         end,
 
         nearby = function(self)
-            if not type == 'default' then
+            if type ~= 'default' then
                 coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or coords
                 self.coords = coords
             end
