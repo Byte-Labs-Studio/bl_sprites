@@ -2,6 +2,9 @@
 ## Description
 Interactive World Sprites that provide players extra info.
 
+### Dependencies:
+- [ox_lib](https://github.com/overextended/ox_lib)
+
 ### [PREVIEW](https://youtu.be/vmtox_rdTOE)
 
 ### [DOCUMENTATION](https://docs.byte-labs.net/bl_sprites)
