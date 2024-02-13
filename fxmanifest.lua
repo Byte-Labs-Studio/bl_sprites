@@ -19,4 +19,5 @@ client_script {
 
 files {
     'client/modules/*.lua',
+    'assets/*.png'
 }

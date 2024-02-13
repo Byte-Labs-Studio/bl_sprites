@@ -1,3 +1,4 @@
+require "client.modules.textures"
 local sprites = require "client.modules.sprites"
 local config = require "client.modules.config"
 local CreateSprite = require "client.modules.sprite"
@@ -6,6 +7,15 @@ local keySpriteScaleModifier, txtDict in config
 local GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords, GetScreenCoordFromWorldCoord = GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords, GetScreenCoordFromWorldCoord
 local table_unpack = table.unpack
 local math_exp = math.exp
+
+
+
+
+
+
+
+
+
 
 local inViews = {}
 local spriteIndicators = {}
@@ -201,3 +211,101 @@ exports('updateTargetData', function(id, key, value)
 
     sprite:updateTargetData(key, value)
 end)
+
+local CreateSprite = exports.bl_sprites
+
+local count = 1
+local function create(number)
+
+    if number == 1 then
+        print('asdkjbsa')
+        local test = CreateSprite:sprite({
+            coords = GetEntityCoords(PlayerPedId()),
+            key = "R",
+            shape = "circle",
+            spriteIndicator = true,
+            colour = {255, 0, 0, 255},
+            distance = 5.0,
+        })
+
+        print(test.sprite, test.keySprite, test.key)
+    elseif number == 2 then
+        local test = CreateSprite:sprite({
+            coords = GetEntityCoords(PlayerPedId()),
+            key = "G",
+            shape = "square",
+            spriteIndicator = true, 
+            colour = {0, 255, 0, 255},
+            distance = 5.0,
+        })
+    elseif number == 3 then
+        local test = CreateSprite:sprite({
+            coords = GetEntityCoords(PlayerPedId()),
+            key = "B",
+            shape = "hex",
+            spriteIndicator = true, 
+            colour = {0, 0, 255, 255},
+            distance = 5.0,
+        })
+    elseif number == 4 then
+        local test = CreateSprite:sprite({
+            coords = GetEntityCoords(PlayerPedId()),
+            key = "eye",
+            shape = "hex",
+            spriteIndicator = true,
+            distance = 5.0,
+        })
+    elseif number == 5 then
+        local test = CreateSprite:sprite({
+            coords = GetEntityCoords(PlayerPedId()),
+            key = "lock",
+            shape = "hex",
+            spriteIndicator = true,
+            distance = 5.0,
+        })
+    elseif number == 6 then
+        local test = CreateSprite:sprite({
+            coords = GetEntityCoords(PlayerPedId()),
+            key = "unlock",
+            shape = "hex",
+            spriteIndicator = true,
+            distance = 5.0,
+        })
+    elseif number == 7 then
+        local test = CreateSprite:sprite({
+            coords = GetEntityCoords(PlayerPedId()),
+            key = "radial",
+            shape = "hex",
+            spriteIndicator = true,
+            distance = 5.0,
+        })
+    elseif number == 8 then
+        local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
+        local test = CreateSprite:spriteOnEntity({
+            entity = vehicle,
+            key = "E",
+            shape = "hex",
+            spriteIndicator = true,
+            distance = 5.0,
+        })
+    elseif number == 9 then
+        local vehicle = GetVehiclePedIsIn(PlayerPedId(), false)
+        local boneid = GetEntityBoneIndexByName(vehicle, "wheel_lf")
+        local test = CreateSprite:spriteOnBone({
+            entity = vehicle,
+            boneId = boneid,
+            key = "LF",
+            shape = "hex",
+            spriteIndicator = true,
+            distance = 5.0,
+        })
+    end
+
+    count = count + 1
+end
+
+RegisterCommand('create', function()
+    create(count)
+end, false)
+
+RegisterKeyMapping('create', 'Create a sprite', 'keyboard', 'F6')
