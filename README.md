@@ -2,7 +2,7 @@
 ## Description
 Interactive World Sprites that provide players extra info.
 
-## [PREVIEW[(
+## [PREVIEW](https://youtu.be/vmtox_rdTOE)
 
 ## [DOCUMENTATION](https://docs.byte-labs.net/bl_sprites)
 
