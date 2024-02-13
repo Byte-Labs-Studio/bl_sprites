@@ -30,7 +30,7 @@ local function baseConstructor(self, data)
         spriteIndicator = data.spriteIndicator
     end
 
-    local coords, entity, boneId, onEnter, onExit, nearby in data
+    local coords, entity, boneId, onEnter, onExit, nearby, canInteract in data
 
     coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or vec3(coords.x, coords.y, coords.z)
 
@@ -41,9 +41,7 @@ local function baseConstructor(self, data)
     self = lib_points.new({
         type = type,
         key = key,
-        canInteract = function()
-            return true
-        end,
+        canInteract = canInteract,
         keySprite = keySprite,
         sprite = selectedSprite,
         scale = scale,
@@ -87,7 +85,7 @@ local function baseConstructor(self, data)
         end,
 
         updateTargetData = function(self, key, value)
-            self[key] = value
+            sprites.active[self.id][key] = value
         end,
 
         removeSprite = function(self)

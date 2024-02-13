@@ -8,20 +8,14 @@ local GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, Ad
 local table_unpack = table.unpack
 local math_exp = math.exp
 
-
-
-
-
-
-
-
-
-
 local inViews = {}
 local spriteIndicators = {}
 
 local function drawSprite(sprite, scaleModifier)
-    if sprite.canInteract and not sprite.canInteract() then return end
+    if sprite.canInteract then
+        local success, resp = pcall(sprite.canInteract)
+        if not success or not resp then return end
+    end
 
     local id = sprite.id
 
@@ -133,7 +127,7 @@ CreateThread(function()
 
     local _wait = 0
 
-    local Wait, pairs, next, GetEntityCoords = Wait, pairs, next, GetEntityCoords
+    local Wait, pairs, next = Wait, pairs, next
     while true do
         Wait(_wait)
         -- find the removed sprites
