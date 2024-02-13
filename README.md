@@ -2,11 +2,11 @@
 ## Description
 Interactive World Sprites that provide players extra info.
 
-## [PREVIEW](https://youtu.be/vmtox_rdTOE)
+### [PREVIEW](https://youtu.be/vmtox_rdTOE)
 
-## [DOCUMENTATION](https://docs.byte-labs.net/bl_sprites)
+### [DOCUMENTATION](https://docs.byte-labs.net/bl_sprites)
 
-## [Create own/edit sprites](https://www.figma.com/file/lCa8qRBuXazc4jXBpaHAuC/Byte-Labs-Sprites?type=design&node-id=0%3A1&mode=design&t=PI6EaFRVr89TyzA4-1)
+### [Create own/edit sprites](https://www.figma.com/file/lCa8qRBuXazc4jXBpaHAuC/Byte-Labs-Sprites?type=design&node-id=0%3A1&mode=design&t=PI6EaFRVr89TyzA4-1)
 
 ### Example
 ```lua
