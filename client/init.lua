@@ -2,7 +2,7 @@ require "client.modules.textures"
 local sprites = require "client.modules.sprites"
 local config = require "client.modules.config"
 local CreateSprite = require "client.modules.sprite"
-
+local myPed = nil
 local keySpriteScaleModifier, txtDict in config
 local GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords, GetScreenCoordFromWorldCoord = GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords, GetScreenCoordFromWorldCoord
 local table_unpack = table.unpack
@@ -20,7 +20,6 @@ local function drawSprite(sprite, scaleModifier)
     local id = sprite.id
 
     local ratio = GetAspectRatio(true)
-
     local coords = sprite.coords
     SetDrawOrigin(coords.x, coords.y, coords.z)
 
@@ -108,6 +107,16 @@ local function drawSprite(sprite, scaleModifier)
 end
 
 CreateThread(function()
+    while true do
+        Wait(200)
+        for _,v in pairs(sprites.entities) do
+            local entity, boneId in v
+            v.coords = boneId and GetWorldPositionOfEntityBone(entity, boneId) or GetEntityCoords(entity)
+        end
+    end
+end)
+
+CreateThread(function()
     local deep_clone = lib.table.deepclone
 
     local activeSprites = sprites.active
@@ -127,10 +136,11 @@ CreateThread(function()
 
     local _wait = 0
 
-    local Wait, pairs, next = Wait, pairs, next
+    myPed = cache.ped
+    local Wait, pairs = Wait, pairs
     while true do
         Wait(_wait)
-        -- find the removed sprites
+
         for k, v in pairs(oldSprites) do
             if not activeSprites[k] then
                 removeActiveSprites[k] = deep_clone(v)
@@ -143,24 +153,23 @@ CreateThread(function()
                 newSprites[k] = 0.1
                 oldSprites[k] = v
             end
-
-            if newSprites[k] and newSprites[k] < 1.0 then
-                newSprites[k] = newSprites[k] + 0.1
+    
+            local newSprite = newSprites[k]
+            if newSprite and newSprite < 1.0 then
+                newSprites[k] += 0.1
                 if newSprites[k] > 1.0 then
                     newSprites[k] = nil
                 end
             end
-
+    
             drawSprite(v, newSprites[k])
         end
 
         for k, v in pairs(removeActiveSprites) do
-            if removeSprites[k] == nil then
-                removeSprites[k] = 1.0
-            end
+            removeSprites[k] = removeSprites[k] or 1.0
 
-            if removeSprites[k] and removeSprites[k] > 0.0 then
-                removeSprites[k] = removeSprites[k] - 0.1
+            if removeSprites[k] > 0.0 then
+                removeSprites[k] -= 0.1
                 if removeSprites[k] <= 0.0 then
                     removeSprites[k] = nil
                     removeActiveSprites[k] = nil
@@ -170,10 +179,9 @@ CreateThread(function()
             end
         end
 
-
         local refreshCoords = (next(activeSprites) or next(removeSprites) or next(newSprites)) and true or false
         if refreshCoords then
-            sprites.playerCoords = GetEntityCoords(cache.ped)
+            sprites.playerCoords = GetEntityCoords(myPed or cache.ped)
             _wait = 0
         else
             _wait = 250
@@ -181,6 +189,10 @@ CreateThread(function()
 
         oldSprites = deep_clone(activeSprites)
     end
+end)
+
+lib.onCache('ped', function(value)
+    myPed = value
 end)
 
 exports('spriteOnEntity', function(data)
