@@ -5,6 +5,9 @@ local lib_points = lib.points
 local Sprite = {}
 Sprite.__index = Sprite
 
+
+local GetWorldPositionOfEntityBone, vec3, GetEntityCoords = GetWorldPositionOfEntityBone, vec3, GetEntityCoords
+
 local function baseConstructor(self, data)
     if not data then
         return
@@ -58,6 +61,10 @@ local function baseConstructor(self, data)
             local id = self.id
             sprites.active[id] = self
 
+            if sprites.entities[id] then
+                sprites.entities[id] = nil
+            end
+
             if onEnter then
                 onEnter(self)
             end
@@ -66,7 +73,7 @@ local function baseConstructor(self, data)
         onExit = function(self)
             local id = self.id
             sprites.active[id] = nil
-
+            sprites.entities[id] = (type == 'entity' or type == 'bone') and self
             if onExit then
                 onExit(self)
             end
