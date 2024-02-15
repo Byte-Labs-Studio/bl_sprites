@@ -3,7 +3,7 @@ fx_version 'cerulean'
 game "gta5"
 
 author "Byte Labs"
-version '1.0.0'
+version '1.0.1'
 description 'Byte Labs Sprites'
 repository 'https://github.com/Byte-Labs-Project/bl_sprites'
 

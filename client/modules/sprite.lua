@@ -5,6 +5,9 @@ local lib_points = lib.points
 local Sprite = {}
 Sprite.__index = Sprite
 
+
+local GetWorldPositionOfEntityBone, vec3, GetEntityCoords = GetWorldPositionOfEntityBone, vec3, GetEntityCoords
+
 local function baseConstructor(self, data)
     if not data then
         return

@@ -107,8 +107,9 @@ local function drawSprite(sprite, scaleModifier)
 end
 
 CreateThread(function()
+    local Wait, GetWorldPositionOfEntityBone, GetEntityCoords, pairs = Wait, GetWorldPositionOfEntityBone, GetEntityCoords, pairs
     while true do
-        Wait(200)
+        Wait(250)
         for _,v in pairs(sprites.entities) do
             local entity, boneId in v
             v.coords = boneId and GetWorldPositionOfEntityBone(entity, boneId) or GetEntityCoords(entity)
@@ -137,7 +138,7 @@ CreateThread(function()
     local _wait = 0
 
     myPed = cache.ped
-    local Wait, pairs = Wait, pairs
+    local Wait, pairs, next = Wait, pairs, next
     while true do
         Wait(_wait)
 
