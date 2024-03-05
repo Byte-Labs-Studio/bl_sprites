@@ -182,7 +182,7 @@ CreateThread(function()
 
         local refreshCoords = (next(activeSprites) or next(removeSprites) or next(newSprites)) and true or false
         if refreshCoords then
-            sprites.playerCoords = GetEntityCoords(myPed or cache.ped)
+            sprites.playerCoords = GetEntityCoords(myPed)
             _wait = 0
         else
             _wait = 250
@@ -207,6 +207,7 @@ end)
 exports('sprite', function(data)
     return CreateSprite:defineSprite(data)
 end)
+
 
 exports('updateTargetData', function(id, key, value)
     if type(id) == 'table' then

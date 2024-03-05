@@ -39,8 +39,6 @@ local function baseConstructor(self, data)
 
     local selectedSprite = contains(shapes, data.shape)  and shape or false
 
-    local GetEntityCoords, GetWorldPositionOfEntityBone = GetEntityCoords, GetWorldPositionOfEntityBone
-
     self = lib_points.new({
         type = type,
         key = key,
@@ -73,7 +71,7 @@ local function baseConstructor(self, data)
         onExit = function(self)
             local id = self.id
             sprites.active[id] = nil
-            sprites.entities[id] = (type == 'entity' or type == 'bone') and self
+            sprites.entities[id] = (type == 'entity' or type == 'bone') and self or nil
             if onExit then
                 onExit(self)
             end
