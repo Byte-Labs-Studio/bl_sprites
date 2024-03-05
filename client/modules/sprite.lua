@@ -8,7 +8,7 @@ Sprite.__index = Sprite
 
 local GetWorldPositionOfEntityBone, vec3, GetEntityCoords = GetWorldPositionOfEntityBone, vec3, GetEntityCoords
 
-local function baseConstructor(self, data)
+local function baseConstructor(data)
     if not data then
         return
     end
@@ -37,9 +37,9 @@ local function baseConstructor(self, data)
 
     coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or vec3(coords.x, coords.y, coords.z)
 
-    local selectedSprite = contains(shapes, data.shape)  and shape or false
+    local selectedSprite = contains(shapes, data.shape) and shape or false
 
-    self = lib_points.new({
+    local spriteData = lib_points.new({
         type = type,
         key = key,
         canInteract = canInteract,
@@ -50,10 +50,7 @@ local function baseConstructor(self, data)
         keyColour = keyColour,
         distance = distance,
         spriteIndicator = spriteIndicator,
-
         coords = coords,
-        entity = entity,
-        boneId = boneId,
 
         onEnter = function(self)
             local id = self.id
@@ -71,7 +68,10 @@ local function baseConstructor(self, data)
         onExit = function(self)
             local id = self.id
             sprites.active[id] = nil
-            sprites.entities[id] = (type == 'entity' or type == 'bone') and self or nil
+            sprites.entities[id] = (type == 'entity' or type == 'bone') and {
+                entity = entity,
+                boneId = boneId
+            } or nil
             if onExit then
                 onExit(self)
             end
@@ -102,27 +102,36 @@ local function baseConstructor(self, data)
         end
     })
 
-    self = setmetatable(self, Sprite)
+    spriteData.resource = GetInvokingResource()
 
-    return self
+    spriteData.eventHandler = AddEventHandler('onResourceStop', function(resourceName)
+        if resourceName ~= spriteData.resource then return end
+        spriteData:removeSprite()
+        RemoveEventHandler(spriteData.eventHandler)
+        spriteData = nil
+    end)
+
+    spriteData = setmetatable(spriteData, Sprite)
+
+    return spriteData
 end
 
 ---@param data DefinedSpriteParam
 function Sprite:defineSprite(data)
     data.type = "default"
-    return baseConstructor(self, data)
+    return baseConstructor(data)
 end
 
 ---@param data EntitySpriteParam
 function Sprite:defineSpriteOnEntity(data)
     data.type = "entity"
-    return baseConstructor(self, data)
+    return baseConstructor(data)
 end
 
 ---@param data BoneSpriteParam
 function Sprite:defineSpriteOnBone(data)
     data.type = "bone"
-    return baseConstructor(self, data)
+    return baseConstructor(data)
 end
 
 return Sprite
