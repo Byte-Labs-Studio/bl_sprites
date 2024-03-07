@@ -27,11 +27,7 @@ local function baseConstructor(data)
     local shape = contains(shapes, data.shape) and data.shape or default.shape
     local scale = data.scale or default.scale
     local distance = data.distance or default.distance
-    local spriteIndicator = config.spriteIndicatorDefault
-
-    if data.spriteIndicator ~= nil then
-        spriteIndicator = data.spriteIndicator
-    end
+    local spriteIndicator = data.spriteIndicator or config.spriteIndicatorDefault
 
     local coords, entity, boneId, onEnter, onExit, nearby, canInteract in data
 
