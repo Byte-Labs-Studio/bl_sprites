@@ -48,6 +48,9 @@ local function baseConstructor(data)
         spriteIndicator = spriteIndicator,
         coords = coords,
 
+        entity = entity,
+        boneId = boneId,
+
         onEnter = function(self)
             local id = self.id
             sprites.active[id] = self
@@ -64,10 +67,7 @@ local function baseConstructor(data)
         onExit = function(self)
             local id = self.id
             sprites.active[id] = nil
-            sprites.entities[id] = (type == 'entity' or type == 'bone') and {
-                entity = entity,
-                boneId = boneId
-            } or nil
+            sprites.entities[id] = (type == 'entity' or type == 'bone') and self or nil
             if onExit then
                 onExit(self)
             end
@@ -86,7 +86,12 @@ local function baseConstructor(data)
         end,
 
         updateTargetData = function(self, key, value)
-            sprites.active[self.id][key] = value
+            local sprite = sprites.active[self.id]
+            if not sprite then return end
+            if key == 'key' then
+                sprite.keySprite = contains(keySprites, value)
+            end
+            sprite[key] = value
         end,
 
         removeSprite = function(self)
@@ -98,12 +103,17 @@ local function baseConstructor(data)
         end
     })
 
+    if #(GetEntityCoords(cache.ped) - coords) > distance then
+        sprites.entities[spriteData.id] = (type == 'entity' or type == 'bone') and spriteData or nil
+    end
+
     spriteData.resource = GetInvokingResource()
 
     spriteData.eventHandler = AddEventHandler('onResourceStop', function(resourceName)
         if resourceName ~= spriteData.resource then return end
         spriteData:removeSprite()
         RemoveEventHandler(spriteData.eventHandler)
+        Wait(1000)
         spriteData = nil
     end)
 

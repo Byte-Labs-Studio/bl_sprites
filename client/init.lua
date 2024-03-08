@@ -6,7 +6,7 @@ local myPed = nil
 local keySpriteScaleModifier, txtDict in config
 local GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords, GetScreenCoordFromWorldCoord = GetAspectRatio, SetDrawOrigin, DrawSprite, BeginTextCommandDisplayText, AddTextComponentSubstringPlayerName, SetTextScale, SetTextCentre, SetTextFont, SetTextColour, EndTextCommandDisplayText, ClearDrawOrigin, GetEntityCoords, GetScreenCoordFromWorldCoord
 local table_unpack = table.unpack
-local math_exp = math.exp
+local math_exp, math_floor = math.exp, math.floor
 
 local inViews = {}
 local spriteIndicators = {}
@@ -22,9 +22,6 @@ local function drawSprite(sprite, scaleModifier)
     local ratio = GetAspectRatio(true)
     local coords = sprite.coords
     SetDrawOrigin(coords.x, coords.y, coords.z)
-
-    local scale = scaleModifier and sprite.scale * scaleModifier or sprite.scale
-    scale = math.floor(scale * 10000) / 10000
 
     if sprite.spriteIndicator then
         local _, x, y = GetScreenCoordFromWorldCoord(coords.x, coords.y, coords.z)
@@ -66,11 +63,14 @@ local function drawSprite(sprite, scaleModifier)
         inViews[id] = 1.0
     end
 
+    local scale = scaleModifier and sprite.scale * scaleModifier or sprite.scale
+    scale = math_floor(scale * 10000) / 10000
+
     if inViews[id] and sprite.sprite or not sprite.spriteIndicator and sprite.sprite then
         scale = scale * math_exp(-0.15 * sprite.currentDistance)
         local r, g, b, a = table_unpack(sprite.colour)
 
-        local spriteScale = scale * inViews[id]
+        local spriteScale = scale > 0.02 and scale or 0.02 * inViews[id]
         DrawSprite(txtDict, sprite.sprite, 0, 0, spriteScale, spriteScale * ratio, 0.0, r, g, b, a or 255)
     end
     
@@ -88,6 +88,7 @@ local function drawSprite(sprite, scaleModifier)
         if sprite.keySprite then
             local r, g, b, a = table_unpack(sprite.keyColour)
             scale = scale * keySpriteScaleModifier
+            scale = scale <= 0.005 and 0.005 or scale
             DrawSprite(txtDict, sprite.key, 0, 0, scale, scale * ratio, 0.0, r, g, b, a or 255)
         else
             BeginTextCommandDisplayText('STRING')
