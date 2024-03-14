@@ -37,7 +37,7 @@ local test = CreateSprite:sprite({
     end,
 })
 
--- test is an object you can call functions on such as removeSprite() or updateTargetData()
+-- test is an sprite class that have options data and the 2 below function 
 
 Wait(2000)
 test:updateTargetData('scale', 0.08)
