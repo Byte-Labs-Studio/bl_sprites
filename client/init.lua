@@ -201,6 +201,10 @@ exports('spriteOnEntity', function(data)
     return CreateSprite:defineSpriteOnEntity(data)
 end)
 
+exports('getClosestSprite', function()
+    return CreateSprite:getClosestSprite()
+end)
+
 exports('spriteOnBone', function(data)
     return CreateSprite:defineSpriteOnBone(data)
 end)
@@ -208,7 +212,6 @@ end)
 exports('sprite', function(data)
     return CreateSprite:defineSprite(data)
 end)
-
 
 exports('updateTargetData', function(id, key, value)
     if type(id) == 'table' then

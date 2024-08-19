@@ -5,7 +5,6 @@ local lib_points = lib.points
 local Sprite = {}
 Sprite.__index = Sprite
 
-
 local GetWorldPositionOfEntityBone, vec3, GetEntityCoords = GetWorldPositionOfEntityBone, vec3, GetEntityCoords
 
 local function baseConstructor(data)
@@ -120,6 +119,19 @@ local function baseConstructor(data)
     spriteData = setmetatable(spriteData, Sprite)
 
     return spriteData
+end
+
+function Sprite:getClosestSprite()
+    local closest = math.huge
+    local closestData = nil
+    for k, v in pairs(sprites.active) do
+        if closest > v.currentDistance then
+            closest = v.currentDistance
+            closestData = v
+        end
+    end
+
+    return closestData
 end
 
 ---@param data DefinedSpriteParam
