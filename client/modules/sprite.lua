@@ -28,11 +28,12 @@ local function baseConstructor(data)
     local distance = data.distance or default.distance
     local spriteIndicator = data.spriteIndicator or config.spriteIndicatorDefault
 
-    local coords, entity, boneId, onEnter, onExit, nearby, canInteract in data
+    local coords, entity, boneId, onEnter, onExit, nearby, canInteract, offset in data
+    local selectedSprite = contains(shapes, data.shape) and shape or false
 
     coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or vec3(coords.x, coords.y, coords.z)
+    offset = offset or vec3(0,0,0)
 
-    local selectedSprite = contains(shapes, data.shape) and shape or false
 
     local spriteData = lib_points.new({
         type = type,
@@ -49,6 +50,8 @@ local function baseConstructor(data)
 
         entity = entity,
         boneId = boneId,
+
+        offset = offset,
 
         onEnter = function(self)
             local id = self.id
@@ -74,7 +77,7 @@ local function baseConstructor(data)
 
         nearby = function(self)
             if type ~= 'default' then
-                coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or coords
+                coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) + offset or coords
                 self.coords = coords
             end
 
