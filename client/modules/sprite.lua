@@ -125,9 +125,9 @@ local function baseConstructor(data)
     return spriteData
 end
 
-function Sprite:getClosestSprite()
+function Sprite:getClosestSprite(onlyInvokingResource)
     for k, v in pairs(sprites.active) do
-        if v.isClosest then
+        if (not onlyInvokingResource or GetInvokingResource() == v.resource) and v.isClosest then
             return v
         end
     end
