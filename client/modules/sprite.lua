@@ -40,6 +40,7 @@ local function baseConstructor(data)
         key = key,
         canInteract = canInteract,
         keySprite = keySprite,
+        data = data.data,
         sprite = selectedSprite,
         scale = scale,
         colour = colour,
@@ -125,16 +126,11 @@ local function baseConstructor(data)
 end
 
 function Sprite:getClosestSprite()
-    local closest = math.huge
-    local closestData = nil
     for k, v in pairs(sprites.active) do
-        if closest > v.currentDistance then
-            closest = v.currentDistance
-            closestData = v
+        if v.isClosest then
+            return v
         end
     end
-
-    return closestData
 end
 
 ---@param data DefinedSpriteParam
