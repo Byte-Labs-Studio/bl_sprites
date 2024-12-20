@@ -27,6 +27,8 @@ return {
         'garage',
         'shirt',
         'scissors',
+        'worm',
+        'hook',
         'dot'
     },
 
