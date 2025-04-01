@@ -108,12 +108,16 @@ local function drawSprite(sprite, scaleModifier)
 end
 
 CreateThread(function()
-    local Wait, GetWorldPositionOfEntityBone, GetEntityCoords, pairs = Wait, GetWorldPositionOfEntityBone, GetEntityCoords, pairs
+    local Wait, GetWorldPositionOfEntityBone, pairs = Wait, GetWorldPositionOfEntityBone, pairs
     while true do
         Wait(250)
         for _,v in pairs(sprites.entities) do
-            local entity, boneId in v
-            v.coords = boneId and GetWorldPositionOfEntityBone(entity, boneId) or GetEntityCoords(entity)
+            local boneId = v.boneId
+            local netId = v.netId
+            local entity = netId and NetworkDoesEntityExistWithNetworkId(netId) and NetToVeh(netId) or v.entity
+            if DoesEntityExist(entity) then
+                v.coords = boneId and GetWorldPositionOfEntityBone(entity, boneId) or GetEntityCoords(entity)
+            end
         end
     end
 end)

@@ -34,7 +34,7 @@ local function baseConstructor(data)
     coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) or vec3(coords.x, coords.y, coords.z)
     offset = offset or vec3(0,0,0)
 
-
+    local netId = NetworkGetEntityIsNetworked(entity) and VehToNet(entity)
     local spriteData = lib_points.new({
         type = type,
         key = key,
@@ -50,6 +50,7 @@ local function baseConstructor(data)
         coords = coords,
 
         entity = entity,
+        netId = netId,
         boneId = boneId,
 
         offset = offset,
@@ -78,6 +79,7 @@ local function baseConstructor(data)
 
         nearby = function(self)
             if type ~= 'default' then
+                entity = netId and NetworkDoesEntityExistWithNetworkId(netId) and NetToVeh(netId) or entity
                 coords = type == 'entity' and GetEntityCoords(entity) or type == 'bone' and GetWorldPositionOfEntityBone(entity, boneId) + offset or coords
                 self.coords = coords
             end
@@ -103,6 +105,9 @@ local function baseConstructor(data)
 
             self:remove()
             sprites.active[id] = nil
+            if sprites.entities[id] then
+                sprites.entities[id] = nil
+            end
         end
     })
 
